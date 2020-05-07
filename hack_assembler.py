@@ -5,6 +5,12 @@ An assembler for Hack computer.
 import json
 
 
+# Get the constants from constants.json
+# CONSTANTS consists of: DEST, JUMP, COMP0, COMP1, SYMBOLS
+CONSTANTS = open('constants.json')
+CONSTANTS = json.loads(CONSTANTS.read())
+
+
 class Symbols:
     """
     A class for keeping track of all symbols and their values.
@@ -35,10 +41,3 @@ class Symbols:
         if symbol in self.symbols:
             return self.symbols[symbol]
         return 'Not exist symbol !'
-
-
-if __name__ == "__main__":
-    # Get the constants from constants.json
-    # CONSTANTS consists of: DEST, JUMP, COMP0, COMP1, SYMBOLS
-    CONSTANTS = open('constants.json')
-    CONSTANTS = json.loads(CONSTANTS.read())
