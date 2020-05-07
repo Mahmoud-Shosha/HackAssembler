@@ -7,8 +7,9 @@ import json
 
 # Get the constants from constants.json
 # CONSTANTS consists of: DEST, JUMP, COMP0, COMP1, SYMBOLS
-CONSTANTS = open('constants.json')
-CONSTANTS = json.loads(CONSTANTS.read())
+CONSTANTS_FILE = open('constants.json')
+CONSTANTS = json.loads(CONSTANTS_FILE.read())
+CONSTANTS_FILE.close()
 
 
 class Symbols:
