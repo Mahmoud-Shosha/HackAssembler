@@ -98,6 +98,13 @@ class Parser:
         """
         instruction_fields = {'type': 'A'}
         symbol = self.current_instruction[1:]
+        # If a value return it
+        if symbol.isnumeric():
+            value = self.to_binary(int(symbol), 15)
+            instruction_fields['value'] = value
+            return instruction_fields
+        # If a symbols (not a value) return its value from self.symbols
+        # But first make sure that the symbol is in the self. symbols
         if self.symbols.get_value(symbol) == 'Not exist symbol !':
             value = self.to_binary(self.next_variable_address, 15)
             self.symbols.add_symbol(symbol, value)
