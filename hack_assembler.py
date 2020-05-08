@@ -96,27 +96,34 @@ class Parser:
         This includes convert any symbol to value and
         add new variables to self.symbols object.
         """
+        instruction_fields = {'type': 'A'}
         symbol = self.current_instruction[1:]
         if self.symbols.get_value(symbol) == 'Not exist symbol !':
             value = self.to_binary(self.next_variable_address, 15)
             self.symbols.add_symbol(symbol, value)
             self.next_variable_address += 1
-            return ['@', value]
-        return ['@', self.symbols.get_value(symbol)]
+            instruction_fields['value'] = value
+        instruction_fields['value'] = self.symbols.get_value(symbol)
+        return instruction_fields
 
     def handle_c_instruction(self):
         """
         Convert C-instruction into a list of dest, comp and jump.
         """
-        # Get the jump field as the second item in the list instruction_fields
-        instruction_fields = self.current_instruction.split(';')
+        instruction_fields = {'type': 'C'}
+        # Get the jump field
+        instruction_fields['jump'] = 'null'
+        if self.current_instruction.count(';') == 1:
+            instruction_fields['jump'] = (
+                self.current_instruction.split(';')[-1])
         # Get dest and comp fields
-        new_fields = instruction_fields[0].split('=')
-        # replace the first item in instruction_fields with dest and cpmp
-        if len(new_fields) == 2:
-            instruction_fields.pop(0)
-            instruction_fields.insert(0, new_fields[1])
-            instruction_fields.insert(0, new_fields[0])
+        instruction_fields['dest'] = 'null'
+        instruction_fields['comp'] = self.current_instruction.split(';')[0]
+        if self.current_instruction.count('=') == 1:
+            instruction_fields['dest'] = (
+                self.current_instruction.split('=')[0])
+            instruction_fields['comp'] = (
+                self.current_instruction.split(';')[0].split('=')[1])
         return instruction_fields
 
     def get_instruction(self):
