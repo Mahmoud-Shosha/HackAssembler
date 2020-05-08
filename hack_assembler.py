@@ -250,3 +250,10 @@ class Coder:
         self.out_file.truncate(current_file_size-1)
         # Then close the file
         self.out_file.close()
+
+
+if __name__ == "__main__":
+    symbols_object = Symbols()
+    parser_object = Parser(symbols_object)
+    coder_object = Coder(symbols_object, parser_object)
+    parser_object.close_in_file()
