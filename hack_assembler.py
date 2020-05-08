@@ -3,12 +3,14 @@ An assembler for Hack computer.
 """
 
 import sys
+import os
 import json
 
 
 # Get the constants from constants.json
 # CONSTANTS consists of: DEST, JUMP, COMP0, COMP1, SYMBOLS
-CONSTANTS_FILE = open('constants.json')
+CONSTANTS_FILE_PATH = os.path.join(os.path.dirname(__file__), 'constants.json')
+CONSTANTS_FILE = open(CONSTANTS_FILE_PATH)
 CONSTANTS = json.loads(CONSTANTS_FILE.read())
 CONSTANTS_FILE.close()
 
