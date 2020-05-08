@@ -166,3 +166,87 @@ class Parser:
         while len(binary) < digit_numbers:
             binary = '0' + binary
         return binary
+
+
+class Coder:
+    """
+    Convert the instructions fields from Parser class using Symbols class
+    and CONSTANTS global variable into 16-bit binary instruction and
+    put it in a .hack file named as the input .asm file.
+    You should use generate_out_file method.
+    """
+
+    def __init__(self, symbols, parser):
+        self.symbols = symbols
+        self.parser = parser
+        self.current_instruction = None
+        self.out_file = None
+        self.generate_out_file()
+
+    def generate_out_file(self):
+        """
+        Convert the instructions fields from Parser class using Symbols class
+        and CONSTANTS global variable into 16-bit binary instruction and
+        put it in a .hack file named as the input .asm file.
+        """
+        # First open the out_file
+        self.open_out_file()
+        # Second loop through instructions and convert them to binary
+        # then write them in the out_file
+        for instruction in self.parser.get_instruction_fields():
+            self.current_instruction = instruction
+            if instruction['type'] == 'A':
+                self.handle_a_instruction()
+            else:
+                self.handle_c_instruction()
+            self.write_instruction_to_out_file()
+        # Finally close the file
+        self.close_out_file()
+
+    def handle_a_instruction(self):
+        """
+        Convert A-instruction into 16-bit binary instruction.
+        """
+        self.current_instruction = '0' + self.current_instruction['value']
+
+    def handle_c_instruction(self):
+        """
+        Convert C-instruction into 16-bit binary instruction.
+        """
+        dest = CONSTANTS['DEST'][self.current_instruction['dest']]
+        jump = CONSTANTS['JUMP'][self.current_instruction['jump']]
+        if self.current_instruction['comp'] in CONSTANTS['COMP0']:
+            comp = CONSTANTS['COMP0'][self.current_instruction['comp']]
+            a_field = '0'
+        else:
+            comp = CONSTANTS['COMP1'][self.current_instruction['comp']]
+            a_field = '1'
+        self.current_instruction = '111' + a_field + comp + dest + jump
+
+    def write_instruction_to_out_file(self):
+        """
+        Write the current instruction into the out file.
+        """
+        self.out_file.write(self.current_instruction + '\n')
+
+    def open_out_file(self):
+        """
+        Open the out_file to write the instructions to it.
+        """
+        # Get the input file name withoot last extension
+        in_file_name = sys.argv[1].split('.')[:-1]
+        in_file_name = '.'.join(in_file_name)
+        # Make the out file name with new extension .hack
+        out_file_name = in_file_name + '.hack'
+        # Open the out_file: create a new one or overwrite an existing
+        self.out_file = open(out_file_name, 'wt')
+
+    def close_out_file(self):
+        """
+        Close the out_file.
+        """
+        # First remove the last new line
+        current_file_size = self.out_file.tell()
+        self.out_file.truncate(current_file_size-1)
+        # Then close the file
+        self.out_file.close()
